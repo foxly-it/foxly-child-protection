@@ -1,5 +1,7 @@
-# Hält die per SHA gepinnten Actions und die AdGuard-Filter-Engine aktuell.
-# Ein gebündelter PR pro Monat; die Validierung läuft automatisch mit.
+# Hält die per SHA gepinnten Actions aktuell: ein gebündelter PR pro Monat,
+# die Validierung läuft automatisch mit. Die Go-Module in tools/engine-check
+# folgen bewusst nicht Dependabot, sondern der urlfilter-Version des jeweils
+# aktuellen AdGuard-Home-Releases (siehe README, Abschnitt Tests).
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -8,11 +10,4 @@ updates:
       interval: monthly
     groups:
       actions:
-        patterns: ["*"]
-  - package-ecosystem: gomod
-    directory: /tools/engine-check
-    schedule:
-      interval: monthly
-    groups:
-      engine:
         patterns: ["*"]

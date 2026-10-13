@@ -216,7 +216,7 @@ python3 scripts/validate_filters.py public/filterlist-child.txt
 cd tools/engine-check && go run . ../../public/filterlist-child.txt
 ```
 
-Die Engine-Prüfung nutzt [`urlfilter`](https://github.com/AdguardTeam/urlfilter) in derselben Version wie das aktuelle AdGuard-Home-Release. Sie stellt sicher, dass jede Regel von AdGuard Home akzeptiert wird, Sperren für `user_child` greifen (inkl. Subdomains), Clients ohne Tag nie blockiert werden und kein Teilstring-Treffer entsteht.
+Die Engine-Prüfung nutzt [`urlfilter`](https://github.com/AdguardTeam/urlfilter) in derselben Version wie das aktuelle AdGuard-Home-Release (derzeit v0.107.79 → urlfilter v0.23.4). Nach einem AdGuard-Home-Update mit neuer urlfilter-Version angleichen: `cd tools/engine-check && go get github.com/AdguardTeam/urlfilter@vX.Y.Z && go mod tidy`. Sie stellt sicher, dass jede Regel von AdGuard Home akzeptiert wird, Sperren für `user_child` greifen (inkl. Subdomains), Clients ohne Tag nie blockiert werden und kein Teilstring-Treffer entsteht.
 
 ```
 foxly-child-protection/
