@@ -165,7 +165,7 @@ AdGuard-Regeln, Domainlisten und Hosts-Dateien werden pro Zeile automatisch erka
 | Auslöser | Zeitpunkt |
 |---|---|
 | Zeitplan | täglich **04:00 Uhr deutscher Zeit** (`timezone: Europe/Berlin`, Sommer-/Winterzeit automatisch) |
-| Push auf `main` | bei Änderungen an `config/`, `scripts/`, `site/`, `tools/` oder Workflows |
+| Push auf `main` | bei Änderungen an `config/`, `scripts/`, `site/`, `tests/`, `tools/` oder Workflows |
 | manuell | **Actions → Filterliste aktualisieren → Run workflow** |
 
 GitHub garantiert keine exakte Startzeit. Zur vollen Stunde ist die Last hoch, Läufe können sich um Minuten bis selten über eine Stunde verzögern oder in Extremfällen ausfallen. Für eine Filterliste, die AdGuard Home ohnehin nur periodisch abruft, ist das unkritisch. Der nächste Lauf holt alles nach.

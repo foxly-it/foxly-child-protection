@@ -19,6 +19,7 @@ on:
       - config/**
       - scripts/**
       - site/**
+      - tests/**
       - tools/**
       - .github/workflows/**
 
