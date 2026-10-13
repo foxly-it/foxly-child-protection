@@ -1,9 +1,9 @@
 module github.com/foxly-it/foxly-child-protection/tools/engine-check
 
-go 1.26.5
+go 1.26.6
 
 require (
-	github.com/AdguardTeam/golibs v0.35.15
+	github.com/AdguardTeam/golibs v0.35.16
 	github.com/AdguardTeam/urlfilter v0.23.4
 )
 
