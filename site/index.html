@@ -37,6 +37,7 @@
           <p class="eyebrow">DNS-Kinderschutz für AdGuard Home</p>
           <h1>Gezielt filtern.<br><em>Nur für Kinder.</em></h1>
           <p class="lead">Eine Sperrliste, die nur auf den Geräten deiner Kinder greift. Jede Regel trägt das Client-Tag <code>$client_tag</code>, alle anderen Geräte im Netz bleiben unberührt. Täglich automatisch aktualisiert, vor jeder Veröffentlichung geprüft und kostenlos bereitgestellt.</p>
+          <div class="url-box"><small>Filter-URL für AdGuard Home</small><div class="url-row"><code class="url" id="list-url">$list_url</code><button class="copy copy-primary" type="button" data-copy-target="list-url">Kopieren</button></div></div>
           <div class="actions">
             <a class="button" href="#setup">Liste einbinden</a>
             <a class="button secondary" href="$homepage" target="_blank" rel="noopener noreferrer">Auf GitHub ansehen</a>
@@ -46,7 +47,7 @@
         <div class="window" aria-label="Auszug aus der Filterliste">
           <div class="window-head"><span></span><span></span><span></span><b>filterlist-child.txt</b><button class="copy" type="button" data-copy="$list_url">URL kopieren</button></div>
           <pre>$preview</pre>
-          <div class="window-foot"><span>In AdGuard Home eintragen</span><b>$list_url</b></div>
+          <div class="window-foot"><span>Datei ansehen</span><a href="$list_url">$list_url</a></div>
         </div>
       </section>
 
@@ -63,7 +64,7 @@
           <h2>In drei Schritten<br><em>aktiv.</em></h2>
           <p class="section-lead">Die Liste wird in AdGuard Home global hinzugefügt. Sperren greift sie trotzdem nur bei Clients, die das Tag <code>$client_tag</code> tragen.</p>
           <ol class="steps">
-            <li><span>01</span><div><b>Liste hinzufügen</b><small>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen, URL eintragen.</small></div></li>
+            <li><span>01</span><div><b>Liste hinzufügen</b><small>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen, Name frei wählen und diese URL eintragen:</small><div class="url-box"><div class="url-row"><code class="url" id="list-url-setup">$list_url</code><button class="copy copy-primary" type="button" data-copy-target="list-url-setup">Kopieren</button></div></div></div></li>
             <li><span>02</span><div><b>Kindergeräte markieren</b><small>Einstellungen → Client-Einstellungen: Gerät als persistenten Client anlegen (IP, MAC oder ClientID) und das Tag <code>$client_tag</code> setzen.</small></div></li>
             <li><span>03</span><div><b>Wirkung prüfen</b><small>Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen: Domain aus der Liste und die IP des Kindergeräts eingeben. Für andere Clients bleibt sie frei.</small></div></li>
           </ol>

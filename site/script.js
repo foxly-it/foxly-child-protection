@@ -9,9 +9,11 @@ for (const button of document.querySelectorAll(".copy")) {
     const label = button.textContent;
     try {
       await navigator.clipboard.writeText(text);
-      button.textContent = "Kopiert";
+      button.textContent = "Kopiert ✓";
     } catch {
-      button.textContent = "Nicht möglich";
+      // Zwischenablage gesperrt: Text markieren, damit Strg/Cmd+C reicht.
+      if (target) getSelection().selectAllChildren(target);
+      button.textContent = "Markiert – Strg+C";
     }
     setTimeout(() => { button.textContent = label; }, 1600);
   });
