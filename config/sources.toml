@@ -1,0 +1,30 @@
+# Foxly Child Protection – zentrale Konfiguration
+#
+# Neue Quellen werden als weiterer [[sources]]-Block ergänzt, ohne
+# Programmänderung. Unterstützte Formate werden pro Zeile automatisch erkannt:
+# AdGuard-/Adblock-Regeln (||domain^), reine Domainlisten und Hosts-Dateien.
+
+[project]
+title = "Foxly Child Protection"
+description = "DNS-Kinderschutzfilter für AdGuard Home. Alle Regeln gelten ausschließlich für Clients mit dem Tag user_child."
+homepage = "https://github.com/foxly-it/foxly-child-protection"
+list_url = "https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt"
+license = "MIT (Code), Quelllisten unter ihrer jeweiligen Lizenz"
+
+[settings]
+client_tag = "user_child"         # AdGuard-Home-Client-Tag, an jede Regel angehängt
+max_download_bytes = 20_000_000    # Obergrenze pro Quelle, größere Downloads brechen ab
+timeout_seconds = 30               # Netzwerk-Timeout je Verbindungsversuch
+retries = 3                        # Versuche bei Netzwerk- und 5xx-Fehlern
+max_shrink_percent = 30            # schrumpft die Liste stärker, wird nicht veröffentlicht
+
+[[sources]]
+name = "Aegis Standard"
+url = "https://raw.githubusercontent.com/0xDarkMatter/aegis-blocklist/master/grades/standard.txt"
+homepage = "https://github.com/0xDarkMatter/aegis-blocklist"
+license = "CC0-1.0"
+enabled = true
+# Reine Domains und Hosts-Einträge als ||domain^ übernehmen (inkl. Subdomains).
+# false = exakt wie in AdGuard Home üblich (|domain^, ohne Subdomains).
+include_subdomains = true
+min_rules = 500                    # weniger gültige Regeln = Quelle defekt, Build bricht ab

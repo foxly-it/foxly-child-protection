@@ -1,0 +1,13 @@
+# Allowlist – Domains, die auf Kindergeräten NICHT blockiert werden sollen.
+#
+# Eine Domain pro Zeile, Kommentare mit #. Ein Eintrag gilt immer auch für
+# alle Subdomains (schule.example erlaubt auch www.schule.example).
+#
+#   schule.example      Entfernt alle Blockierregeln dieser Liste für die Domain
+#                       und ihre Subdomains. Blockiert eine übergeordnete Regel
+#                       (z. B. ||example^) die Domain weiterhin, wird automatisch
+#                       eine Ausnahmeregel @@||schule.example^$ctag=user_child erzeugt.
+#
+#   @@schule.example    Erzeugt immer eine explizite Ausnahmeregel. Sie gibt die
+#                       Domain für Kindergeräte auch dann frei, wenn eine ANDERE
+#                       in AdGuard Home aktive Filterliste sie blockiert.

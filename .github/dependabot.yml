@@ -1,0 +1,18 @@
+# Hält die per SHA gepinnten Actions und die AdGuard-Filter-Engine aktuell.
+# Ein gebündelter PR pro Monat; die Validierung läuft automatisch mit.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: gomod
+    directory: /tools/engine-check
+    schedule:
+      interval: monthly
+    groups:
+      engine:
+        patterns: ["*"]

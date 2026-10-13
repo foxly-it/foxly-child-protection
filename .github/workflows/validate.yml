@@ -1,0 +1,50 @@
+# Tests, Erzeugung und Prüfung der Filterliste.
+# Läuft für Pull Requests und wird von update-filters.yml als Build-Job genutzt.
+name: Validierung
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      allow_shrink:
+        type: boolean
+        default: false
+
+permissions: {}
+
+jobs:
+  build:
+    name: Tests, Build und Prüfung
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Unit-Tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Filterliste erzeugen
+        env:
+          ALLOW_SHRINK: ${{ inputs.allow_shrink }}
+        run: python3 scripts/update_filters.py --out public $([ "$ALLOW_SHRINK" = true ] && echo --allow-shrink)
+
+      - name: Filterliste validieren
+        run: python3 scripts/validate_filters.py public/filterlist-child.txt
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: tools/engine-check/go.mod
+          cache-dependency-path: tools/engine-check/go.sum
+
+      - name: Prüfung mit der Filter-Engine von AdGuard Home
+        working-directory: tools/engine-check
+        run: go run . ../../public/filterlist-child.txt
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: public

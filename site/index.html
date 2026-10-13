@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$title</title>
+<meta name="description" content="DNS-Kinderschutzfilter für AdGuard Home mit Client-Tag $client_tag">
+<style>
+  :root { --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5d6675; --line: #dfe3ea; --accent: #0b6bcb; --ok: #1a7f37; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11151c; --card: #1a2029; --text: #e6e9ef; --muted: #9aa4b2; --line: #2b3340; --accent: #5aa9ff; --ok: #3fb950; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { margin: 0 0 4px; font-size: 1.9rem; letter-spacing: -.01em; }
+  h2 { margin: 36px 0 12px; font-size: 1.15rem; }
+  p.lead { margin: 0 0 24px; color: var(--muted); }
+  a { color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+  .stat span { color: var(--muted); font-size: .9rem; }
+  .ok { color: var(--ok); font-weight: 600; }
+  code, .url { font: .92em ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .url { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overflow-wrap: anywhere; }
+  ol li { margin-bottom: 6px; }
+  .note { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--muted); }
+  footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>$title</h1>
+  <p class="lead">DNS-Kinderschutzfilter für AdGuard Home. Alle Regeln gelten ausschließlich für Geräte mit dem Client-Tag <code>$client_tag</code>.</p>
+
+  <div class="stats">
+    <div class="card stat"><b class="ok">Aktuell</b><span>zuletzt erfolgreich erzeugt</span></div>
+    <div class="card stat"><b>$rules</b><span>Filterregeln ($exceptions Ausnahmen)</span></div>
+    <div class="card stat"><b>$generated_local</b><span><time datetime="$generated">$generated</time></span></div>
+  </div>
+  <p><img src="$homepage/actions/workflows/update-filters.yml/badge.svg" alt="Status des Aktualisierungs-Workflows"> &nbsp;Schlägt eine Aktualisierung fehl, bleibt diese Version online.</p>
+
+  <h2>Filterliste</h2>
+  <a class="url" href="$list_url">$list_url</a>
+
+  <h2>In AdGuard Home einbinden</h2>
+  <ol>
+    <li><b>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen</b>, Name <code>$title</code>, obige URL eintragen.</li>
+    <li><b>Einstellungen → Client-Einstellungen</b>: jedes Kindergerät als persistenten Client anlegen (IP, MAC oder ClientID) und das Tag <code>$client_tag</code> setzen.</li>
+    <li>Prüfen unter <b>Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen</b>: Domain aus der Liste und als Client die IP des Kindergeräts eingeben. Für andere Clients darf sie nicht blockiert sein.</li>
+  </ol>
+  <p class="note">DNS-Filterung ist ein Baustein, kein vollständiger Jugendschutz. Sie lässt sich z.&nbsp;B. über VPNs, verschlüsseltes DNS (DoH/DoT) oder mobile Daten umgehen und filtert keine Inhalte innerhalb erlaubter Seiten.</p>
+
+  <h2>Quellen</h2>
+  <ul>
+$source_rows
+  </ul>
+
+  <footer>
+    <a href="$homepage">Quellcode, Dokumentation und eigene Regeln auf GitHub</a> · <a href="status.json">status.json</a>
+  </footer>
+</main>
+</body>
+</html>

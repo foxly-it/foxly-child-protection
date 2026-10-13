@@ -1,0 +1,12 @@
+# Build-Ausgabe (wird über GitHub Pages veröffentlicht)
+/public/
+__pycache__/
+*.pyc
+*.tmp
+
+# Editor, Betriebssystem, lokale Werkzeuge
+.DS_Store
+.vscode/
+.idea/
+.claude/
+CLAUDE.md

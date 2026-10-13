@@ -1,0 +1,5 @@
+# Blocklist – zusätzliche Domains, die auf Kindergeräten blockiert werden.
+#
+# Eine Domain pro Zeile, Kommentare mit #. Jeder Eintrag sperrt die Domain
+# inklusive aller Subdomains (||domain^$ctag=user_child).
+# Einträge der Allowlist haben Vorrang.
