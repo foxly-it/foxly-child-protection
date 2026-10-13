@@ -6,9 +6,9 @@
 <title>$title</title>
 <meta name="description" content="DNS-Kinderschutzfilter für AdGuard Home mit Client-Tag $client_tag">
 <style>
-  :root { --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5d6675; --line: #dfe3ea; --accent: #0b6bcb; --ok: #1a7f37; }
+  :root { --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5d6675; --line: #dfe3ea; --accent: #0b6bcb; }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #11151c; --card: #1a2029; --text: #e6e9ef; --muted: #9aa4b2; --line: #2b3340; --accent: #5aa9ff; --ok: #3fb950; }
+    :root { --bg: #11151c; --card: #1a2029; --text: #e6e9ef; --muted: #9aa4b2; --line: #2b3340; --accent: #5aa9ff; }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -19,9 +19,9 @@
   a { color: var(--accent); }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .stat b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+  .stat b { display: block; font-size: 1.3rem; line-height: 1.3; font-variant-numeric: tabular-nums; }
   .stat span { color: var(--muted); font-size: .9rem; }
-  .ok { color: var(--ok); font-weight: 600; }
+  .stat code { font-size: .85em; }
   code, .url { font: .92em ui-monospace, SFMono-Regular, Menlo, monospace; }
   .url { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overflow-wrap: anywhere; }
   ol li { margin-bottom: 6px; }
@@ -35,11 +35,11 @@
   <p class="lead">DNS-Kinderschutzfilter für AdGuard Home. Alle Regeln gelten ausschließlich für Geräte mit dem Client-Tag <code>$client_tag</code>.</p>
 
   <div class="stats">
-    <div class="card stat"><b class="ok">Aktuell</b><span>zuletzt erfolgreich erzeugt</span></div>
     <div class="card stat"><b>$rules</b><span>Filterregeln ($exceptions Ausnahmen)</span></div>
-    <div class="card stat"><b>$generated_local</b><span><time datetime="$generated">$generated</time></span></div>
+    <div class="card stat"><b><time datetime="$generated" title="$generated">$generated_date</time></b><span>letzte erfolgreiche Aktualisierung, $generated_time Uhr</span></div>
+    <div class="card stat"><b><code>$client_tag</code></b><span>Client-Tag</span></div>
   </div>
-  <p><img src="$homepage/actions/workflows/update-filters.yml/badge.svg" alt="Status des Aktualisierungs-Workflows"> &nbsp;Schlägt eine Aktualisierung fehl, bleibt diese Version online.</p>
+  <p><a href="$homepage/actions/workflows/update-filters.yml"><img src="$homepage/actions/workflows/update-filters.yml/badge.svg" alt="Status des Aktualisierungs-Workflows"></a><br>Aktueller Workflow-Status. Schlägt eine Aktualisierung fehl, bleibt die oben angezeigte Version online.</p>
 
   <h2>Filterliste</h2>
   <a class="url" href="$list_url">$list_url</a>

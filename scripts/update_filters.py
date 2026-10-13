@@ -422,10 +422,11 @@ def main(argv: list[str] | None = None, fetcher=fetch) -> int:
     status = {"title": cfg["project"]["title"], "generated": generated, "rules": total,
               "block_rules": total - exceptions, "exceptions": exceptions,
               "client_tag": cfg["settings"]["client_tag"], "list_url": cfg["project"]["list_url"], "sources": sources}
+    local = now.astimezone(ZoneInfo("Europe/Berlin"))
     page = Template(args.site.read_text("utf-8")).substitute(
         {k: escape(str(v)) for k, v in status.items() if k != "sources"},
         homepage=escape(cfg["project"]["homepage"]),
-        generated_local=now.astimezone(ZoneInfo("Europe/Berlin")).strftime("%d.%m.%Y, %H:%M Uhr"),
+        generated_date=f"{local:%d.%m.%Y}", generated_time=f"{local:%H:%M}",
         source_rows="\n".join(f'<li><a href="{escape(s["url"])}">{escape(s["name"])}</a> – {s["published"]} Regeln</li>'
                               for s in sources))
     args.out.mkdir(parents=True, exist_ok=True)
