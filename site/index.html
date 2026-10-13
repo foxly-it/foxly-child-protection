@@ -37,14 +37,6 @@
           <p class="eyebrow">DNS-Kinderschutz für AdGuard Home</p>
           <h1>Gezielt filtern.<br><em>Nur für Kinder.</em></h1>
           <p class="lead">Eine Sperrliste, die nur auf den Geräten deiner Kinder greift. Jede Regel trägt das Client-Tag <code>$client_tag</code>, alle anderen Geräte im Netz bleiben unberührt. Täglich automatisch aktualisiert, vor jeder Veröffentlichung geprüft und kostenlos bereitgestellt.</p>
-          <div class="window form-window" aria-label="Eintrag in AdGuard Home">
-            <div class="window-head"><span></span><span></span><span></span><b>AdGuard Home · Sperrliste hinzufügen</b></div>
-            <div class="fields">
-              <div class="field"><small>Name</small><div class="field-input"><code>$title</code></div></div>
-              <div class="field"><small>URL</small><div class="field-input accent"><code id="list-url">$list_url_wbr</code><button class="copy copy-primary" type="button" data-copy-target="list-url">Kopieren</button></div></div>
-            </div>
-            <div class="window-foot"><span>Filter → DNS-Sperrlisten → Eigene Liste hinzufügen</span><b>Speichern</b></div>
-          </div>
           <div class="actions">
             <a class="button" href="#setup">Liste einbinden</a>
             <a class="button secondary" href="$homepage" target="_blank" rel="noopener noreferrer">Auf GitHub ansehen</a>
@@ -71,30 +63,31 @@
           <h2>In drei Schritten<br><em>aktiv.</em></h2>
           <p class="section-lead">Die Liste wird in AdGuard Home global hinzugefügt. Sperren greift sie trotzdem nur bei Clients, die das Tag <code>$client_tag</code> tragen.</p>
           <ol class="steps">
-            <li><span>01</span><div><b>Liste hinzufügen</b><small>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen, Name frei wählen und diese URL eintragen:</small><div class="window form-window compact" aria-label="Eintrag in AdGuard Home">
-            <div class="window-head"><span></span><span></span><span></span><b>AdGuard Home · Sperrliste hinzufügen</b></div>
-            <div class="fields">
-              <div class="field"><small>Name</small><div class="field-input"><code>$title</code></div></div>
-              <div class="field"><small>URL</small><div class="field-input accent"><code id="list-url-setup">$list_url_wbr</code><button class="copy copy-primary" type="button" data-copy-target="list-url-setup">Kopieren</button></div></div>
-            </div>
-            <div class="window-foot"><span>Filter → DNS-Sperrlisten → Eigene Liste hinzufügen</span><b>Speichern</b></div>
-          </div></div></li>
+            <li><span>01</span><div><b>Liste hinzufügen</b><small>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen, Name und URL wie im Fenster eintragen und speichern.</small></div></li>
             <li><span>02</span><div><b>Kindergeräte markieren</b><small>Einstellungen → Client-Einstellungen: Gerät als persistenten Client anlegen (IP, MAC oder ClientID) und das Tag <code>$client_tag</code> setzen.</small></div></li>
-            <li><span>03</span><div><b>Wirkung prüfen</b><small>Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen: Domain aus der Liste und die IP des Kindergeräts eingeben. Für andere Clients bleibt sie frei.</small></div></li>
-          </ol>
-        </div>
+            <li><span>03</span><div><b>Wirkung prüfen</b><small>Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen: Domain aus der Liste und die IP des Kindergeräts eingeben. Für andere Clients bleibt sie frei.</small>
         <div class="window">
           <div class="window-head"><span></span><span></span><span></span><b>Prüfung per API</b><button class="copy" type="button" data-copy-target="api">Kopieren</button></div>
           <pre id="api">AGH=http://adguard.lan   <span class="muted"># Adresse deiner Instanz</span>
 
 <span class="muted"># Kindergerät: blockiert (||1337x.to^$$ctag=…)</span>
-curl -su admin -G "$$AGH/control/filtering/check_host" \
+curl -su admin -G $$AGH/control/filtering/check_host \
   -d name=1337x.to -d client=IP-KINDERGERÄT
 
 <span class="muted"># Erwachsenengerät: nicht blockiert</span>
-curl -su admin -G "$$AGH/control/filtering/check_host" \
+curl -su admin -G $$AGH/control/filtering/check_host \
   -d name=1337x.to -d client=IP-ERWACHSENER</pre>
           <div class="window-foot"><span>Client-Feld ab AdGuard Home</span><b>v0.107.58</b></div>
+        </div></div></li>
+          </ol>
+        </div>
+        <div class="window form-window" aria-label="Eintrag in AdGuard Home">
+          <div class="window-head"><span></span><span></span><span></span><b>AdGuard Home · Sperrliste hinzufügen</b></div>
+          <div class="fields">
+            <div class="field"><small>Name</small><div class="field-input"><code>$title</code></div></div>
+            <div class="field"><small>URL</small><div class="field-input accent"><code id="list-url">$list_url_wbr</code><button class="copy copy-primary" type="button" data-copy-target="list-url">Kopieren</button></div></div>
+          </div>
+          <div class="window-foot"><span>Filter → DNS-Sperrlisten → Eigene Liste hinzufügen</span><b>Speichern</b></div>
         </div>
       </section>
 

@@ -396,7 +396,7 @@ def render_page(template: str, cfg: dict, status: dict, list_text: str, now: dat
     return Template(template).substitute(
         {k: escape(str(v)) for k, v in status.items() if k != "sources"},
         homepage=escape(cfg["project"]["homepage"]), site_url=escape(cfg["project"]["site_url"]),
-        list_url_wbr="/<wbr>".join(map(escape, cfg["project"]["list_url"].rsplit("/", 1))),
+        list_url_wbr='/<wbr><span class="nowrap">'.join(map(escape, cfg["project"]["list_url"].rsplit("/", 1))) + "</span>",
         generated_date=f"{local:%d.%m.%Y}", generated_time=f"{local:%H:%M}", source_count=len(sources),
         preview="\n".join(map(line, [*head, "!", *rules])) + '\n<span class="muted">…</span>',
         source_rows="\n".join(f'          <a href="{escape(s["homepage"])}"><b>{escape(s["name"])}</b>'
