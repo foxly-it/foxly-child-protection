@@ -1,11 +1,12 @@
-# Migration von filter.foxly.de zu GitHub Pages
+# Migration vom Hetzner-Hosting zu GitHub Pages
 
-| | URL |
+| | |
 |---|---|
-| **Bisher** | `https://filter.foxly.de/filterlist-child.txt` (Hetzner, CloudPanel, Cronjob 04:00) |
-| **Neu** | `https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt` |
+| **Bisher** | `filter.foxly.de` auf Hetzner (CloudPanel), Cronjob 04:00 mit `/usr/local/sbin/update-child-filter.sh` |
+| **Jetzt** | `filter.foxly.de` als Custom Domain von GitHub Pages, Erzeugung per GitHub Actions |
+| **URL** | unverändert: `https://filter.foxly.de/filterlist-child.txt` |
 
-Die bisherige URL wird erst abgeschaltet, wenn die neue Lösung in AdGuard Home nachweislich funktioniert (Schritt 8).
+Weil die URL gleich bleibt, muss in AdGuard Home nichts umgetragen werden. Die Umstellung erfolgt allein über DNS: Sobald `filter.foxly.de` auf GitHub zeigt, lädt AdGuard Home beim nächsten Filter-Update automatisch die neue Liste.
 
 ## Was sich inhaltlich ändert
 
@@ -30,89 +31,70 @@ Weitere Unterschiede:
 - Das alte Skript hätte Regeln mit fremdem Client-Tag (`$ctag=device_pc`) unverändert übernommen. Diese hätten dann für *alle* PCs gegolten. Regeln mit unbekannten Optionen hätte AdGuard Home komplett verworfen, und eine leere Quelle hätte eine Liste ohne Regeln veröffentlicht. All das wird jetzt abgefangen.
 - Kommentare und der Aegis-Kopf bleiben erhalten, dazu kommen ein AdGuard-konformer Kopf (`! Title:`, `! Expires:`, `! Rules:`) und je Quelle URL, Lizenz und SHA-256.
 
-## 1. GitHub-Repository einrichten
+## 1. Repository, Actions und Pages (erledigt)
 
-Erledigt: `foxly-it/foxly-child-protection`, öffentlich. Zum Nachbauen:
-
-```bash
-gh repo create foxly-it/foxly-child-protection --public --source . --push
-```
-
-Empfohlene Einstellungen (gesetzt):
-
-- **Settings → Actions → General:** Workflow permissions *Read repository contents*, „Allow GitHub Actions to create and approve pull requests“ aus, Actions auf GitHub-eigene Actions beschränkt, Pinning per SHA erzwungen, Freigabe für Workflows aus Forks aller externen Beitragenden.
+- Repository `foxly-it/foxly-child-protection`, öffentlich.
+- **Settings → Actions → General:** Workflow permissions *Read repository contents*, „Allow GitHub Actions to create and approve pull requests“ aus, nur GitHub-eigene Actions erlaubt, SHA-Pinning erzwungen, Freigabe für Workflows aus Forks aller externen Beitragenden.
 - **Settings → Rules → Rulesets:** `main` gegen Löschen und Force-Push geschützt.
+- **Settings → Pages:** Source *GitHub Actions*, Custom Domain `filter.foxly.de`, *Enforce HTTPS* an. Die Umgebung `github-pages` erlaubt Deployments nur von `main`.
+- Erster Lauf über **Actions → Filterliste aktualisieren → Run workflow**: alle drei Jobs (*build*, *deploy*, *archive*) grün.
 
-## 2. GitHub Actions aktivieren
+## 2. DNS (erledigt)
 
-Actions sind in neuen Repositories aktiv. Die Workflows liegen unter `.github/workflows/`. Prüfen unter **Actions**: „Filterliste aktualisieren“ und „Validierung“ müssen gelistet sein. Der Zeitplan (täglich 04:00 Europe/Berlin) greift automatisch.
-
-## 3. GitHub Pages konfigurieren
-
-**Settings → Pages → Build and deployment → Source: GitHub Actions.** (Erledigt, per API: `gh api -X POST repos/foxly-it/foxly-child-protection/pages -f build_type=workflow`.)
-
-Die Umgebung `github-pages` lässt Deployments nur vom Branch `main` zu (**Settings → Environments → github-pages**).
-
-## 4. Erste Filterliste generieren
-
-**Actions → Filterliste aktualisieren → Run workflow → Run workflow.** Nach etwa einer Minute sind alle drei Jobs (*build*, *deploy*, *archive*) grün. Die Zusammenfassung des Laufs zeigt Regelanzahl, Duplikate, redundante und verworfene Zeilen.
-
-## 5. Veröffentlichte Datei testen
-
-```bash
-URL=https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt
-curl -sSfI "$URL" | grep -iE '^(HTTP|content-type)'     # HTTP/2 200, text/plain
-curl -sSf "$URL" | head -10                               # Kopf mit ! Title: Foxly Child Protection
-curl -sSf "$URL" | grep -c 'ctag=user_child'              # ~700
-curl -sSf "$URL" | grep -vE '^(!|#|$)' | grep -vc 'ctag=user_child'   # 0
-curl -sSf https://foxly-it.github.io/foxly-child-protection/status.json
+```
+filter.foxly.de.  60  IN  CNAME  foxly-it.github.io.
 ```
 
-## 6. Neue URL in AdGuard Home eintragen
+Der CAA-Eintrag von `foxly.de` (`issue "letsencrypt.org"`) erlaubt das Zertifikat, das GitHub für die Custom Domain ausstellt.
 
-Auf dem Raspberry Pi, erst nach Freigabe:
+**Noch empfohlen:** Domain im GitHub-Konto verifizieren (**Profil → Settings → Pages → Add a domain** → `foxly.de`). GitHub nennt dann einen TXT-Eintrag `_github-pages-challenge-foxly-it.foxly.de`. Nach dem Eintragen und „Verify“ kann kein fremdes Repository `filter.foxly.de` übernehmen, auch nicht, falls Pages hier einmal abgeschaltet wird und der CNAME stehen bleibt.
 
-1. Vorher `AdGuardHome.yaml` sichern, z. B. `sudo cp /opt/AdGuardHome/AdGuardHome.yaml ~/AdGuardHome.yaml.bak` (Pfad je nach Installation).
-2. **Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen**
-   Name `Foxly Child Protection`, URL wie oben.
-3. Nach dem Hinzufügen muss die Liste mit ~700 Regeln und aktuellem Aktualisierungsdatum erscheinen.
-4. Die bisherige Liste (`filter.foxly.de`) **deaktivieren, nicht löschen**. So ist ein Rückweg mit einem Klick möglich. Beide gleichzeitig aktiv zu lassen schadet nicht, die alte Liste würde aber weiter ihre Teilstring-Fehltreffer erzeugen.
+## 3. Veröffentlichte Datei testen
 
-## 7. Client-Tags prüfen
+```bash
+URL=https://filter.foxly.de/filterlist-child.txt
+curl -sSfI "$URL" | grep -iE '^(HTTP|content-type)'                  # HTTP/2 200, text/plain
+curl -sSf "$URL" | head -8                                            # ! Title: Foxly Child Protection
+curl -sSf "$URL" | grep -c '^||.*\$ctag=user_child$'                 # ~700
+curl -sSf "$URL" | grep -vE '^(!|#|$)' | grep -vc 'ctag=user_child'   # 0
+curl -sSf https://filter.foxly.de/status.json
+```
 
-1. **Einstellungen → Client-Einstellungen:** Jedes Kindergerät ist ein persistenter Client mit Tag `user_child`, „Filterung aktivieren“ ist an. (Das war schon für die alte Liste nötig.)
+Antwortet `curl` mit einem Zertifikatsfehler, hält ein Resolver noch den alten A-Eintrag (`128.140.49.48`) im Cache. Prüfen mit `dig +short filter.foxly.de`: richtig ist `foxly-it.github.io.` mit den IPs `185.199.108–111.153`. Der Cache läuft nach der alten TTL von selbst ab. Bei Unbound geht es sofort mit `unbound-control flush filter.foxly.de`, in AdGuard Home über **Einstellungen → DNS-Einstellungen → Cache leeren**.
+
+## 4. AdGuard Home: neue Liste übernehmen
+
+Wichtig: AdGuard Home löst die Filter-URL über sich selbst auf. Erst wenn sein Upstream (Unbound) den neuen CNAME liefert, kommt die neue Liste an.
+
+1. **Filter → DNS-Sperrlisten → Nach Updates suchen** (oder bis zum nächsten automatischen Update warten).
+2. Die Liste unter `https://filter.foxly.de/filterlist-child.txt` zeigt danach **700 Regeln** und das aktuelle Datum. Den Namen kann man auf *Foxly Child Protection* ändern.
+3. Kontrolle des Formats: Im Abfrageprotokoll lauten die Regeln jetzt `||domain^$ctag=user_child`, nicht mehr `domain$ctag=user_child`.
+
+## 5. Client-Tags prüfen
+
+1. **Einstellungen → Client-Einstellungen:** Jedes Kindergerät ist ein persistenter Client mit Tag `user_child`, „Filterung aktivieren“ ist an.
 2. **Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen** (Client-Feld ab v0.107.58):
 
    | Domain | Client | Erwartung |
    |---|---|---|
-   | `1337x.to` | IP eines Kindergeräts | blockiert durch `\|\|1337x.to^$ctag=user_child` (Liste *Foxly Child Protection*) |
+   | `1337x.to` | IP eines Kindergeräts | blockiert durch `\|\|1337x.to^$ctag=user_child` |
    | `www.1337x.to` | IP eines Kindergeräts | blockiert (Subdomain) |
    | `1337x.to` | IP eines Erwachsenengeräts | nicht blockiert |
    | `bavg.com` | IP eines Kindergeräts | nicht blockiert (bisher Fehltreffer) |
 
    Per API:
    ```bash
-   curl -su admin "http://ADGUARD-HOST/control/filtering/check_host?name=1337x.to&client=IP-DES-KINDERGERÄTS"
+   curl -su admin -G "http://ADGUARD-HOST/control/filtering/check_host" -d name=1337x.to -d client=IP-KINDERGERÄT
    ```
-3. Praxistest auf einem Kindergerät: `nslookup 1337x.to` liefert `0.0.0.0` (Standard-Sperrmodus). Im **Abfrageprotokoll** erscheint die Anfrage als blockiert mit Regel `||1337x.to^$ctag=user_child` und Filter *Foxly Child Protection*. Gegenprobe auf einem Erwachsenengerät: normale Antwort.
+3. Praxistest auf einem Kindergerät: `nslookup 1337x.to` liefert `0.0.0.0` (Standard-Sperrmodus). Im **Abfrageprotokoll** erscheint die Anfrage als blockiert mit Regel `||1337x.to^$ctag=user_child`. Gegenprobe auf einem Erwachsenengerät: normale Antwort.
 
-## 8. Bisherige Hostinglösung abschalten
+Lokal bereits verifiziert mit AdGuard Home v0.107.79 (gleiche Liste, Clients mit und ohne Tag, echte DNS-Abfragen und `check_host`).
 
-Voraussetzungen, alle erfüllt:
+## 6. Altes Hosting aufräumen
 
-- [ ] Mindestens 3 aufeinanderfolgende geplante Läufe (04:00) grün unter **Actions**
-- [ ] AdGuard Home zeigt die neue Liste mit aktuellem Datum (Update nach einem dieser Läufe)
-- [ ] Tests aus Schritt 7 bestanden, Abfrageprotokoll der Kindergeräte unauffällig
-- [ ] Keine weiteren Geräte oder Instanzen nutzen noch `filter.foxly.de` (Zugriffslog prüfen: `grep filterlist-child.txt` im nginx-Log der Site; nach der Umstellung dürfen keine Abrufe von der eigenen IP mehr kommen)
+Die Site ist bereits offline. Sobald Schritt 4 und 5 erfolgreich waren und mindestens ein geplanter Lauf um 04:00 grün war:
 
-Danach in dieser Reihenfolge:
+1. Hetzner: Cronjob entfernen (`crontab -e` als root, Zeile `0 4 * * * /usr/local/sbin/update-child-filter.sh`), das Skript archivieren oder löschen.
+2. CloudPanel: Site `filter.foxly.de` löschen, Zertifikat und Site-Benutzer `foxly-filter` entfallen damit.
 
-1. AdGuard Home: alte, deaktivierte Liste löschen.
-2. Hetzner: Cronjob entfernen (`crontab -e` als root, Zeile `0 4 * * * /usr/local/sbin/update-child-filter.sh`), Skript archivieren.
-3. Optional als Übergang: `filter.foxly.de/filterlist-child.txt` per `301` auf die neue URL umleiten. AdGuard Home folgt Weiterleitungen beim Filterabruf. CloudPanel → Site → Vhost:
-   ```nginx
-   location = /filterlist-child.txt { return 301 https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt; }
-   ```
-4. Später: Site `filter.foxly.de` in CloudPanel und den DNS-Eintrag entfernen.
-
-**Rückweg** jederzeit bis Schritt 8.2: alte Liste in AdGuard Home wieder aktivieren, neue deaktivieren.
+**Rückweg** bis dahin: DNS wieder auf `A 128.140.49.48` setzen und die Site in CloudPanel aktivieren. Der Cronjob erzeugt die alte Liste weiterhin.

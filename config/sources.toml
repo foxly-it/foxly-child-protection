@@ -8,7 +8,8 @@
 title = "Foxly Child Protection"
 description = "DNS-Kinderschutzfilter für AdGuard Home. Alle Regeln gelten ausschließlich für Clients mit dem Tag user_child."
 homepage = "https://github.com/foxly-it/foxly-child-protection"
-list_url = "https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt"
+site_url = "https://filter.foxly.de/"
+list_url = "https://filter.foxly.de/filterlist-child.txt"
 license = "MIT (Code), Quelllisten unter ihrer jeweiligen Lizenz"
 
 [settings]

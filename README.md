@@ -2,15 +2,15 @@
 
 [![Filterliste aktualisieren](https://github.com/foxly-it/foxly-child-protection/actions/workflows/update-filters.yml/badge.svg)](https://github.com/foxly-it/foxly-child-protection/actions/workflows/update-filters.yml)
 
-DNS-Kinderschutzfilter für **AdGuard Home**. Jede Regel trägt das Client-Tag `$ctag=user_child` und wirkt deshalb **nur auf Kindergeräte**. Alle anderen Geräte im Netz bleiben unberührt. Die Liste wird täglich vollautomatisch von GitHub Actions erzeugt, geprüft und über GitHub Pages veröffentlicht. Ein eigener Server ist nicht nötig.
+DNS-Kinderschutzfilter für **AdGuard Home**. Jede Regel trägt das Client-Tag `$ctag=user_child` und wirkt deshalb **nur auf Kindergeräte**. Alle anderen Geräte im Netz bleiben unberührt. Die Liste wird täglich vollautomatisch von GitHub Actions erzeugt, geprüft und über GitHub Pages unter `filter.foxly.de` veröffentlicht. Ein eigener Server ist nicht nötig.
 
 **Filterliste:**
 
 ```
-https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt
+https://filter.foxly.de/filterlist-child.txt
 ```
 
-Projektseite mit Status: <https://foxly-it.github.io/foxly-child-protection/>
+Projektseite mit Status: <https://filter.foxly.de/>
 
 ---
 
@@ -27,7 +27,7 @@ Projektseite mit Status: <https://foxly-it.github.io/foxly-child-protection/>
 - [Sicherheit](#sicherheit)
 - [Tests und lokale Ausführung](#tests-und-lokale-ausführung)
 - [Einschränkungen](#einschränkungen)
-- [Migration von filter.foxly.de](MIGRATION.md)
+- [Migration vom Hetzner-Hosting](MIGRATION.md)
 
 ## Was ist Foxly Child Protection?
 
@@ -85,7 +85,7 @@ Gleiche Regeln aus verschiedenen Quellen oder Formaten (`example.com`, `||exampl
 ## Installation in AdGuard Home
 
 1. **Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen**
-2. Name: `Foxly Child Protection`, URL: `https://foxly-it.github.io/foxly-child-protection/filterlist-child.txt`
+2. Name: `Foxly Child Protection`, URL: `https://filter.foxly.de/filterlist-child.txt`
 3. Speichern. Die Liste muss danach mit rund 700 Regeln erscheinen.
 4. Empfohlen: **Einstellungen → Allgemeine Einstellungen → Filter-Aktualisierungsintervall: 24 Stunden** (oder kürzer)
 
@@ -197,13 +197,15 @@ Fehlgeschlagene Läufe meldet GitHub per E-Mail an den Repository-Inhaber. Der S
 
 ## Sicherheit
 
-- Keine Zugangsdaten, Tokens, IP-Adressen oder personenbezogenen Daten im Repository. Der Workflow nutzt ausschließlich das automatische, kurzlebige `GITHUB_TOKEN`.
+- Keine Zugangsdaten, Tokens oder IP-Adressen im Repository. Personenbezogene Angaben stehen nur im gesetzlich vorgeschriebenen Impressum und in der Datenschutzerklärung (`site/imprint.html`, `site/privacy.html`). Der Workflow nutzt ausschließlich das automatische, kurzlebige `GITHUB_TOKEN`.
 - `permissions: {}` global, jeder Job erhält nur die Rechte, die er braucht. Der Job, der externe Daten verarbeitet, hat nur Leserechte und keine gespeicherten Git-Zugangsdaten.
 - Alle Actions sind per Commit-SHA gepinnt und stammen von GitHub (`actions/*`). Dependabot schlägt monatlich gebündelte Updates vor, ein Test erzwingt das Pinning.
 - Heruntergeladene Inhalte werden nie ausgeführt, nur als Text geparst. Nur HTTPS, auch bei Weiterleitungen, mit Größenlimit, Timeout und strenger Prüfung jeder Zeile.
 - Ausnahmeregeln, Umleitungen (`dnsrewrite`, Hosts mit echter IP) und Optionen mit Wirkung auf andere Listen (`badfilter`) aus externen Quellen werden nicht übernommen. Eine manipulierte Quelle kann damit Sperren hinzufügen, aber keine Freigaben erzwingen oder Anfragen umleiten.
 - Steuerzeichen aus Quellen werden maskiert, bevor sie im Protokoll erscheinen, damit keine Workflow-Befehle eingeschleust werden können.
 - Workflow-Änderungen werden im Pull Request automatisch geprüft (`validate.yml`, nur Leserechte, kein `pull_request_target`).
+- Die Projektseite lädt keine externen Inhalte (keine Schriften, Badges oder Skripte von Dritten). Den Workflow-Status zeigt sie anhand des eigenen Erzeugungszeitpunkts: Liegt er mehr als 26 Stunden zurück, erscheint „Veraltet“.
+- Domain: `filter.foxly.de` ist ein CNAME auf `foxly-it.github.io` und unter **Settings → Pages** als Custom Domain mit erzwungenem HTTPS eingetragen. Empfohlen ist zusätzlich die Domain-Verifizierung im GitHub-Konto (**Settings → Pages → Add a domain**, TXT-Eintrag `_github-pages-challenge-foxly-it.foxly.de`). Sie verhindert, dass ein fremdes Repository die Subdomain übernimmt, falls Pages hier einmal deaktiviert wird.
 
 ## Tests und lokale Ausführung
 
@@ -231,7 +233,7 @@ foxly-child-protection/
 ├── filters/filterlist-child.txt       zuletzt veröffentlichte Liste (vom Workflow gepflegt)
 ├── scripts/update_filters.py          Erzeugung
 ├── scripts/validate_filters.py        Validierung
-├── site/index.html                    Vorlage der Projektseite
+├── site/                             Projektseite (index.html als Vorlage, Impressum, Datenschutz)
 ├── tests/test_filters.py
 └── tools/engine-check/                Prüfung mit der AdGuard-Home-Engine
 ```

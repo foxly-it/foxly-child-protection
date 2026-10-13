@@ -20,6 +20,7 @@ import ipaddress
 import json
 import os
 import re
+import shutil
 import sys
 import time
 import tomllib
@@ -230,7 +231,7 @@ def fetch(url: str, max_bytes: int, timeout: float, retries: int = 3) -> bytes:
 def load_config(path: Path) -> dict:
     try:
         cfg = tomllib.loads(path.read_text("utf-8"))
-        for key in ("title", "description", "homepage", "list_url", "license"):
+        for key in ("title", "description", "homepage", "site_url", "list_url", "license"):
             cfg["project"][key]
         for key in ("client_tag", "max_download_bytes", "timeout_seconds", "retries", "max_shrink_percent"):
             cfg["settings"][key]
@@ -283,7 +284,8 @@ def build(cfg: dict, config_dir: Path, fetcher=fetch) -> list[Section]:
         section = Section(f"Quelle: {src['name']}", [f"URL: {src['url']}",
                           *([f"Lizenz: {src['license']}"] if "license" in src else []), f"SHA-256: {sha256}"])
         parse_source(text, section, tag, src.get("include_subdomains", True))
-        section.stats = {"name": src["name"], "url": src["url"], "sha256": sha256,
+        section.stats = {"name": src["name"], "url": src["url"], "homepage": src.get("homepage", src["url"]),
+                         "license": src.get("license", ""), "sha256": sha256,
                          "accepted": len(section.rules), "rejected": sum(section.rejected.values())}
         if len(section.rules) < src.get("min_rules", 1):
             raise BuildError(f"Quelle '{src['name']}': nur {len(section.rules)} gültige Regeln "
@@ -378,6 +380,28 @@ def report(sections: list[Section]) -> str:
                       *(["**Verworfene Zeilen**", "", *details] if details else [])]) + "\n"
 
 
+def render_page(template: str, cfg: dict, status: dict, list_text: str, now: datetime) -> str:
+    """Füllt die Projektseite mit den Werten des aktuellen Builds."""
+    def line(text: str) -> str:
+        if text[0] in "!#":
+            return f'<span class="muted">{escape(text)}</span>'
+        rule, _, tag = text.partition("ctag=")
+        return escape(rule) + (f'<span class="tag">ctag={escape(tag)}</span>' if tag else "")
+
+    lines = list_text.split("\n")
+    head = [x for x in lines[:8] if x.startswith(("! Title:", "! Client-Tag:", "! Rules:", "! Last modified:"))]
+    rules = [x for x in lines if x and x[0] not in "!#"][:6]
+    local = now.astimezone(ZoneInfo("Europe/Berlin"))
+    sources = status["sources"]
+    return Template(template).substitute(
+        {k: escape(str(v)) for k, v in status.items() if k != "sources"},
+        homepage=escape(cfg["project"]["homepage"]), site_url=escape(cfg["project"]["site_url"]),
+        generated_date=f"{local:%d.%m.%Y}", generated_time=f"{local:%H:%M}", source_count=len(sources),
+        preview="\n".join(map(line, [*head, "!", *rules])) + '\n<span class="muted">…</span>',
+        source_rows="\n".join(f'          <a href="{escape(s["homepage"])}"><b>{escape(s["name"])}</b>'
+                              f'<span>{escape(s["license"])}</span><em>{s["published"]} Regeln</em></a>' for s in sources))
+
+
 def write_atomic(path: Path, content: str) -> None:
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_text(content, "utf-8")
@@ -390,7 +414,7 @@ def main(argv: list[str] | None = None, fetcher=fetch) -> int:
     ap.add_argument("--out", type=Path, default=ROOT / "public", help="Ausgabeverzeichnis (GitHub Pages)")
     ap.add_argument("--previous", type=Path, default=ROOT / "filters" / LIST_NAME,
                     help="zuletzt veröffentlichte Liste für die Schrumpfungsprüfung")
-    ap.add_argument("--site", type=Path, default=ROOT / "site" / "index.html")
+    ap.add_argument("--site", type=Path, default=ROOT / "site", help="Vorlage der Projektseite")
     ap.add_argument("--allow-shrink", action="store_true", help="deutlich kleinere Liste trotzdem erzeugen")
     args = ap.parse_args(argv)
     try:
@@ -422,15 +446,10 @@ def main(argv: list[str] | None = None, fetcher=fetch) -> int:
     status = {"title": cfg["project"]["title"], "generated": generated, "rules": total,
               "block_rules": total - exceptions, "exceptions": exceptions,
               "client_tag": cfg["settings"]["client_tag"], "list_url": cfg["project"]["list_url"], "sources": sources}
-    local = now.astimezone(ZoneInfo("Europe/Berlin"))
-    page = Template(args.site.read_text("utf-8")).substitute(
-        {k: escape(str(v)) for k, v in status.items() if k != "sources"},
-        homepage=escape(cfg["project"]["homepage"]),
-        generated_date=f"{local:%d.%m.%Y}", generated_time=f"{local:%H:%M}",
-        source_rows="\n".join(f'<li><a href="{escape(s["url"])}">{escape(s["name"])}</a> – {s["published"]} Regeln</li>'
-                              for s in sources))
-    args.out.mkdir(parents=True, exist_ok=True)
-    write_atomic(args.out / LIST_NAME, render_list(cfg, sections, generated))
+    list_text = render_list(cfg, sections, generated)
+    page = render_page((args.site / "index.html").read_text("utf-8"), cfg, status, list_text, now)
+    shutil.copytree(args.site, args.out, dirs_exist_ok=True, ignore=shutil.ignore_patterns("index.html"))
+    write_atomic(args.out / LIST_NAME, list_text)
     write_atomic(args.out / "status.json", json.dumps(status, ensure_ascii=False, indent=2) + "\n")
     write_atomic(args.out / "index.html", page)
     print(f"Geschrieben: {args.out / LIST_NAME} ({total} Regeln)")

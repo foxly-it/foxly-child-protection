@@ -1,65 +1,119 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>$title</title>
-<meta name="description" content="DNS-Kinderschutzfilter für AdGuard Home mit Client-Tag $client_tag">
-<style>
-  :root { --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5d6675; --line: #dfe3ea; --accent: #0b6bcb; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #11151c; --card: #1a2029; --text: #e6e9ef; --muted: #9aa4b2; --line: #2b3340; --accent: #5aa9ff; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
-  h1 { margin: 0 0 4px; font-size: 1.9rem; letter-spacing: -.01em; }
-  h2 { margin: 36px 0 12px; font-size: 1.15rem; }
-  p.lead { margin: 0 0 24px; color: var(--muted); }
-  a { color: var(--accent); }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .stat b { display: block; font-size: 1.3rem; line-height: 1.3; font-variant-numeric: tabular-nums; }
-  .stat span { color: var(--muted); font-size: .9rem; }
-  .stat code { font-size: .85em; }
-  code, .url { font: .92em ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .url { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overflow-wrap: anywhere; }
-  ol li { margin-bottom: 6px; }
-  .note { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--muted); }
-  footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$title: DNS-Kinderschutz für AdGuard Home</title>
+  <meta name="description" content="Kostenlose DNS-Sperrliste für AdGuard Home, die nur auf Kindergeräten wirkt (Client-Tag $client_tag). Täglich automatisch aktualisiert und geprüft.">
+  <meta name="theme-color" content="#0d1218">
+  <meta property="og:title" content="$title – DNS-Kinderschutz für AdGuard Home">
+  <meta property="og:description" content="Sperrliste mit Client-Tag $client_tag: filtert nur Kindergeräte, täglich aktualisiert und geprüft.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="$site_url">
+  <link rel="canonical" href="$site_url">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-<main>
-  <h1>$title</h1>
-  <p class="lead">DNS-Kinderschutzfilter für AdGuard Home. Alle Regeln gelten ausschließlich für Geräte mit dem Client-Tag <code>$client_tag</code>.</p>
+<body data-generated="$generated">
+  <a class="skip-link" href="#content">Zum Inhalt springen</a>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="$title Startseite"><img src="icon.svg" alt=""><span>Foxly <span>Child Protection</span></span></a>
+      <div class="nav-group">
+        <nav class="links" aria-label="Hauptnavigation">
+          <a class="nav-home active" aria-current="page" href="./" aria-label="Startseite" title="Startseite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg></a>
+          <a href="#setup">Einrichtung</a>
+          <a class="optional" href="#funktion">Funktionsweise</a>
+          <a class="optional" href="#quellen">Quellen</a>
+        </nav>
+        <a class="github-button" href="$homepage" target="_blank" rel="noopener noreferrer" aria-label="$title auf GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.5v-2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.3 11.3 0 0 0 12 .7Z"/></svg></a>
+      </div>
+    </header>
 
-  <div class="stats">
-    <div class="card stat"><b>$rules</b><span>Filterregeln ($exceptions Ausnahmen)</span></div>
-    <div class="card stat"><b><time datetime="$generated" title="$generated">$generated_date</time></b><span>letzte erfolgreiche Aktualisierung, $generated_time Uhr</span></div>
-    <div class="card stat"><b><code>$client_tag</code></b><span>Client-Tag</span></div>
-  </div>
-  <p><a href="$homepage/actions/workflows/update-filters.yml"><img src="$homepage/actions/workflows/update-filters.yml/badge.svg" alt="Status des Aktualisierungs-Workflows"></a><br>Aktueller Workflow-Status. Schlägt eine Aktualisierung fehl, bleibt die oben angezeigte Version online.</p>
+    <main id="content">
+      <section class="hero">
+        <div>
+          <div class="status" id="status"><span class="status-dot" aria-hidden="true"></span><span id="status-text">Stand $generated_date, $generated_time Uhr</span></div>
+          <p class="eyebrow">DNS-Kinderschutz für AdGuard Home</p>
+          <h1>Gezielt filtern.<br><em>Nur für Kinder.</em></h1>
+          <p class="lead">Eine Sperrliste, die nur auf den Geräten deiner Kinder greift. Jede Regel trägt das Client-Tag <code>$client_tag</code>, alle anderen Geräte im Netz bleiben unberührt. Täglich automatisch aktualisiert, vor jeder Veröffentlichung geprüft und kostenlos bereitgestellt.</p>
+          <div class="actions">
+            <a class="button" href="#setup">Liste einbinden</a>
+            <a class="button secondary" href="$homepage" target="_blank" rel="noopener noreferrer">Auf GitHub ansehen</a>
+          </div>
+        </div>
 
-  <h2>Filterliste</h2>
-  <a class="url" href="$list_url">$list_url</a>
+        <div class="window" aria-label="Auszug aus der Filterliste">
+          <div class="window-head"><span></span><span></span><span></span><b>filterlist-child.txt</b><button class="copy" type="button" data-copy="$list_url">URL kopieren</button></div>
+          <pre>$preview</pre>
+          <div class="window-foot"><span>In AdGuard Home eintragen</span><b>$list_url</b></div>
+        </div>
+      </section>
 
-  <h2>In AdGuard Home einbinden</h2>
-  <ol>
-    <li><b>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen</b>, Name <code>$title</code>, obige URL eintragen.</li>
-    <li><b>Einstellungen → Client-Einstellungen</b>: jedes Kindergerät als persistenten Client anlegen (IP, MAC oder ClientID) und das Tag <code>$client_tag</code> setzen.</li>
-    <li>Prüfen unter <b>Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen</b>: Domain aus der Liste und als Client die IP des Kindergeräts eingeben. Für andere Clients darf sie nicht blockiert sein.</li>
-  </ol>
-  <p class="note">DNS-Filterung ist ein Baustein, kein vollständiger Jugendschutz. Sie lässt sich z.&nbsp;B. über VPNs, verschlüsseltes DNS (DoH/DoT) oder mobile Daten umgehen und filtert keine Inhalte innerhalb erlaubter Seiten.</p>
+      <div class="stats" aria-label="Kennzahlen">
+        <div class="stat"><small>Filterregeln</small><b>$rules</b><span>davon $exceptions Ausnahmen</span></div>
+        <div class="stat"><small>Letzte Aktualisierung</small><b>$generated_date</b><span>$generated_time Uhr · täglich 04:00</span></div>
+        <div class="stat"><small>Client-Tag</small><b>$client_tag</b><span>nur markierte Geräte</span></div>
+        <div class="stat"><small>Quellen</small><b>$source_count</b><span><a href="#quellen">Herkunft ansehen →</a></span></div>
+      </div>
 
-  <h2>Quellen</h2>
-  <ul>
+      <section class="split" id="setup">
+        <div>
+          <p class="eyebrow">Einrichtung</p>
+          <h2>In drei Schritten<br><em>aktiv.</em></h2>
+          <p class="section-lead">Die Liste wird in AdGuard Home global hinzugefügt. Sperren greift sie trotzdem nur bei Clients, die das Tag <code>$client_tag</code> tragen.</p>
+          <ol class="steps">
+            <li><span>01</span><div><b>Liste hinzufügen</b><small>Filter → DNS-Sperrlisten → Sperrliste hinzufügen → Eigene Liste hinzufügen, URL eintragen.</small></div></li>
+            <li><span>02</span><div><b>Kindergeräte markieren</b><small>Einstellungen → Client-Einstellungen: Gerät als persistenten Client anlegen (IP, MAC oder ClientID) und das Tag <code>$client_tag</code> setzen.</small></div></li>
+            <li><span>03</span><div><b>Wirkung prüfen</b><small>Filter → Benutzerdefinierte Filterregeln → Filterung überprüfen: Domain aus der Liste und die IP des Kindergeräts eingeben. Für andere Clients bleibt sie frei.</small></div></li>
+          </ol>
+        </div>
+        <div class="window">
+          <div class="window-head"><span></span><span></span><span></span><b>Prüfung per API</b><button class="copy" type="button" data-copy-target="api">Kopieren</button></div>
+          <pre id="api">AGH=http://adguard.lan   <span class="muted"># Adresse deiner Instanz</span>
+
+<span class="muted"># Kindergerät: blockiert (||1337x.to^$$ctag=…)</span>
+curl -su admin -G "$$AGH/control/filtering/check_host" \
+  -d name=1337x.to -d client=IP-KINDERGERÄT
+
+<span class="muted"># Erwachsenengerät: nicht blockiert</span>
+curl -su admin -G "$$AGH/control/filtering/check_host" \
+  -d name=1337x.to -d client=IP-ERWACHSENER</pre>
+          <div class="window-foot"><span>Client-Feld ab AdGuard Home</span><b>v0.107.58</b></div>
+        </div>
+      </section>
+
+      <section id="funktion">
+        <p class="eyebrow">Funktionsweise</p>
+        <h2>Automatisch.<br><em>Und konservativ.</em></h2>
+        <p class="section-lead">GitHub Actions erzeugt die Liste jeden Morgen neu. Veröffentlicht wird nur, was alle Prüfungen bestanden hat. Schlägt etwas fehl, bleibt die letzte funktionierende Version online.</p>
+        <div class="grid">
+          <article class="card"><span>01 · TÄGLICH</span><h3>Aktualisierung um 04:00</h3><p>Quellen abrufen, Formate erkennen (AdGuard-Regeln, Domainlisten, Hosts-Dateien), Duplikate und redundante Subdomains entfernen.</p></article>
+          <article class="card"><span>02 · GEZIELT</span><h3>Nur für Kindergeräte</h3><p>Jede Regel lautet <code>||domain^$$ctag=$client_tag</code>. Sie sperrt die Domain samt Subdomains, aber keine Namen, die nur ähnlich klingen.</p></article>
+          <article class="card"><span>03 · GEPRÜFT</span><h3>Mit der AdGuard-Engine</h3><p>Vor jeder Veröffentlichung prüft die Filter-Engine von AdGuard Home jede Regel, ob sie greift und Clients ohne Tag nie trifft.</p></article>
+          <article class="card"><span>04 · SICHER</span><h3>Nichts wird umgedeutet</h3><p>Ausnahmen, Umleitungen und unklare Regeln aus externen Quellen werden verworfen. Eine manipulierte Quelle kann nichts freigeben.</p></article>
+          <article class="card"><span>05 · ANPASSBAR</span><h3>Allowlist und Blocklist</h3><p>Eigene Domains sperren oder freigeben. Die Allowlist hat immer Vorrang, Änderungen sind wenige Minuten später online.</p></article>
+          <article class="card"><span>06 · TRANSPARENT</span><h3>Nachvollziehbar</h3><p>Jede inhaltliche Änderung landet in der Git-Historie, mit SHA-256 jeder Quelle und vollständigem Prüfprotokoll.</p></article>
+        </div>
+        <p class="warning"><b>Kein vollständiger Jugendschutz.</b> DNS-Filterung lässt sich über VPNs, verschlüsseltes DNS (DoH/DoT) oder mobile Daten umgehen und sieht keine Inhalte innerhalb erlaubter Seiten. Sie ergänzt Gerätebeschränkungen und Begleitung, ersetzt sie aber nicht.</p>
+      </section>
+
+      <section id="quellen">
+        <p class="eyebrow">Quellen</p>
+        <h2>Woher die Regeln<br><em>stammen.</em></h2>
+        <p class="section-lead">Grundlage ist die Aegis Blocklist mit Kategorien wie VPN- und Proxy-Umgehung, Glücksspiel, Erwachseneninhalte, Piraterie und Stalkerware. Weitere Quellen lassen sich ohne Programmänderung ergänzen.</p>
+        <div class="list">
 $source_rows
-  </ul>
+        </div>
+      </section>
+    </main>
 
-  <footer>
-    <a href="$homepage">Quellcode, Dokumentation und eigene Regeln auf GitHub</a> · <a href="status.json">status.json</a>
-  </footer>
-</main>
+    <footer class="footer">
+      <div><strong>$title</strong><span>DNS-Kinderschutz für AdGuard Home, frei und quelloffen.</span></div>
+      <nav aria-label="Rechtliches und Projekt"><a href="$homepage">GitHub</a><a href="$homepage/actions/workflows/update-filters.yml">Workflow-Status</a><a href="status.json">status.json</a><a href="$homepage/blob/main/LICENSE">MIT</a><a href="https://rootguard.foxly.de/">RootGuard</a><a href="privacy.html">Datenschutz</a><a href="imprint.html">Impressum</a></nav>
+      <small>© <span id="year">2026</span> Mark Schenk · Made with 💜 by Foxly IT</small>
+    </footer>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
