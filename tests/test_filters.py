@@ -1,6 +1,7 @@
 """Tests für Foxly Child Protection: python3 -m unittest discover -s tests -v"""
 
 import io
+import os
 import re
 import sys
 import tempfile
@@ -14,6 +15,9 @@ import update_filters as uf  # noqa: E402
 from validate_filters import validate  # noqa: E402
 
 TAG = "user_child"
+# Test-Meldungen sollen in CI weder als Annotation noch in der Step-Summary landen.
+for var in ("GITHUB_ACTIONS", "GITHUB_STEP_SUMMARY"):
+    os.environ.pop(var, None)
 
 
 def rules(line, subdomains=True):
